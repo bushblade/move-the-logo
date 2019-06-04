@@ -42,7 +42,7 @@ function App() {
   }, [position, keypress])
 
   return (
-    <div className="App">
+    <div className="App" style={{ position: 'relative' }}>
       <input
         type="text"
         style={{ height: 0, width: 0, opacity: 0 }}
@@ -52,14 +52,17 @@ function App() {
         onKeyUp={handleKeyUp}
       />
       <div>
-        <ReactComponent
-          alt="logo"
+        <span
+          role="img"
+          aria-label="cat"
           style={{
-            width: '6rem',
-            height: '6rem',
+            fontSize: '4rem',
+            position: 'absolute',
             transform: `translate3d(${position.x}px,${position.y}px,0)`
           }}
-        />
+        >
+          😸
+        </span>
       </div>
     </div>
   )
