@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react'
-// import styled from 'styled-components'
 import logo from './logo.svg'
 
 function App() {
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const inputRef = useRef()
+
+  const speed = 10
 
   const [keypress, setKeyPress] = useState({
     ArrowDown: false,
@@ -21,20 +22,23 @@ function App() {
   const handleKeyUp = e => {
     setKeyPress({ ...keypress, [e.key]: false })
   }
+
   useEffect(() => {
     inputRef.current.focus()
     let interval = setInterval(() => {
       if (Object.values(keypress).some(val => val)) {
         const { ArrowDown, ArrowUp, ArrowLeft, ArrowRight } = keypress
         let newPosition = { ...position }
-        if (ArrowDown) newPosition.y = position.y + 5
-        if (ArrowUp) newPosition.y = position.y - 5
-        if (ArrowLeft) newPosition.x = position.x - 5
-        if (ArrowRight) newPosition.x = position.x + 5
+        if (ArrowDown) newPosition.y = position.y + speed
+        if (ArrowUp) newPosition.y = position.y - speed
+        if (ArrowLeft) newPosition.x = position.x - speed
+        if (ArrowRight) newPosition.x = position.x + speed
         setPosition(newPosition)
       }
     }, 10)
-    return () => clearInterval(interval)
+    const clear = () => clearInterval(interval)
+    if (!Object.values(keypress).some(val => val)) clear()
+    return clear
   }, [position, keypress])
 
   return (
