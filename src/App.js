@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import logo from './logo.svg'
+import { ReactComponent } from './logo.svg'
 
 function App() {
   const [position, setPosition] = useState({ x: 0, y: 0 })
@@ -52,9 +52,7 @@ function App() {
         onKeyUp={handleKeyUp}
       />
       <div>
-        <img
-          src={logo}
-          className="App-logo"
+        <ReactComponent
           alt="logo"
           style={{
             width: '6rem',
