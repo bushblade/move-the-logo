@@ -1,15 +1,17 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 
 // import { ReactComponent } from './logo.svg'
 import { useElementSize } from './hooks'
-import { GlobalStyle } from './styled'
+import { GlobalStyle, HiddenInput, Arena } from './styled'
+import { getSize } from './helpers'
 
 function App() {
   const [position, setPosition] = useState({ x: 0, y: 0 })
-  const speed = 10
+  const [size, arenaRef] = useElementSize()
+  const speed = 12
 
   const inputRef = useRef()
-  const [size, elementRef] = useElementSize()
+  const catRef = useRef()
 
   const [keypress, setKeyPress] = useState({
     ArrowDown: false,
@@ -19,55 +21,67 @@ function App() {
   })
 
   const handleKeyDown = e => {
-    if (!keypress[e.key]) setKeyPress({ ...keypress, [e.key]: true })
+    if (!keypress[e.key] && keypress.hasOwnProperty(e.key)) {
+      setKeyPress({ ...keypress, [e.key]: true })
+    }
   }
-  const handleKeyUp = e => setKeyPress({ ...keypress, [e.key]: false })
+
+  const handleKeyUp = e => {
+    if (keypress.hasOwnProperty(e.key)) {
+      setKeyPress({ ...keypress, [e.key]: false })
+    }
+  }
+  const isMoving = useCallback(() => Object.values(keypress).some(val => val), [keypress])
 
   // update position with setInterval but only if a key is being pressed.
   useEffect(() => {
     inputRef.current.focus()
     let interval = setInterval(() => {
-      if (Object.values(keypress).some(val => val)) {
+      // if some keys are currently being pressed.
+      if (isMoving()) {
         const { ArrowDown, ArrowUp, ArrowLeft, ArrowRight } = keypress
         const { width, height } = size
+        const catSize = getSize(catRef.current)
+        const catWidth = catSize.width + 7
+        const catHeight = catSize.height + 10
         let newPosition = { ...position }
-        if (ArrowDown && position.y < height - 100) newPosition.y = position.y + speed
+        if (ArrowDown && position.y < height - catHeight) newPosition.y = position.y + speed
         if (ArrowUp && position.y > 0) newPosition.y = position.y - speed
         if (ArrowLeft && position.x > 0) newPosition.x = position.x - speed
-        if (ArrowRight && position.x < width - 100) newPosition.x = position.x + speed
+        if (ArrowRight && position.x < width - catWidth) newPosition.x = position.x + speed
         setPosition(newPosition)
       }
     }, 10)
     // clear the interval if no arrow keys have been pressed
     const clear = () => clearInterval(interval)
-    if (!Object.values(keypress).some(val => val)) clear()
+    if (!isMoving()) clear()
     return clear
-  }, [position, keypress, size])
+  }, [position, keypress, size, isMoving])
 
   return (
     <>
       <GlobalStyle />
-      <input
+      <HiddenInput
         type="text"
-        style={{ height: 0, width: 0, opacity: 0 }}
         ref={inputRef}
         onBlur={() => inputRef.current.focus()}
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
       />
-      <div style={{ width: '100vw', height: '100vh' }} ref={elementRef}>
+      <Arena ref={arenaRef}>
         <span
           role="img"
           aria-label="cat"
+          ref={catRef}
           style={{
             fontSize: '4rem',
             position: 'absolute',
             transform: `translate3d(${position.x}px,${position.y}px,0)`
           }}
         >
-          😸
+          {isMoving() ? '😸' : '😾'}
         </span>
-      </div>
+      </Arena>
     </>
   )
 }

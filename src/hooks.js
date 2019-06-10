@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { getSize } from './helpers'
 
 export const useElementSize = () => {
   const [size, setSize] = useState({ width: 100, height: 100 })
@@ -14,16 +15,8 @@ export const useElementSize = () => {
     [resized]
   )
 
-  function getSize(node) {
-    return {
-      width: node.getBoundingClientRect().width,
-      height: node.getBoundingClientRect().height
-    }
-  }
-
   useEffect(() => {
     const handleResize = e => setResized(true)
-
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
