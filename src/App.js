@@ -4,6 +4,7 @@ import { ReactComponent } from './logo.svg'
 function App() {
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const inputRef = useRef()
+  const gameContainer = useRef()
 
   const speed = 10
 
@@ -41,8 +42,12 @@ function App() {
     return clear
   }, [position, keypress])
 
+  useEffect(() => {
+    console.dir(gameContainer.current)
+  }, [])
+
   return (
-    <div className="App" style={{ position: 'relative' }}>
+    <div style={{ position: 'relative' }}>
       <input
         type="text"
         style={{ height: 0, width: 0, opacity: 0 }}
@@ -51,7 +56,7 @@ function App() {
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
       />
-      <div>
+      <div ref={gameContainer} style={{ width: '100vw', height: '100vh' }}>
         <span
           role="img"
           aria-label="cat"
