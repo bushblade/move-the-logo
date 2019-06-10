@@ -3,10 +3,9 @@ import { ReactComponent } from './logo.svg'
 
 function App() {
   const [position, setPosition] = useState({ x: 0, y: 0 })
-  const inputRef = useRef()
-  const gameContainer = useRef()
-
   const speed = 10
+
+  const inputRef = useRef()
 
   const [keypress, setKeyPress] = useState({
     ArrowDown: false,
@@ -16,14 +15,11 @@ function App() {
   })
 
   const handleKeyDown = e => {
-    if (!keypress[e.key]) {
-      setKeyPress({ ...keypress, [e.key]: true })
-    }
+    if (!keypress[e.key]) setKeyPress({ ...keypress, [e.key]: true })
   }
-  const handleKeyUp = e => {
-    setKeyPress({ ...keypress, [e.key]: false })
-  }
+  const handleKeyUp = e => setKeyPress({ ...keypress, [e.key]: false })
 
+  // update position with setInterval but only if a key is being pressed.
   useEffect(() => {
     inputRef.current.focus()
     let interval = setInterval(() => {
@@ -37,14 +33,11 @@ function App() {
         setPosition(newPosition)
       }
     }, 10)
+    // clear the interval if no arrow keys have been pressed
     const clear = () => clearInterval(interval)
     if (!Object.values(keypress).some(val => val)) clear()
     return clear
   }, [position, keypress])
-
-  useEffect(() => {
-    console.dir(gameContainer.current)
-  }, [])
 
   return (
     <div style={{ position: 'relative' }}>
@@ -56,7 +49,7 @@ function App() {
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
       />
-      <div ref={gameContainer} style={{ width: '100vw', height: '100vh' }}>
+      <div style={{ width: '100vw', height: '100vh' }}>
         <span
           role="img"
           aria-label="cat"
