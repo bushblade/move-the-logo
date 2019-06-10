@@ -1,11 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { ReactComponent } from './logo.svg'
+
+// import { ReactComponent } from './logo.svg'
+import { useElementSize } from './hooks'
+import { GlobalStyle } from './styled'
 
 function App() {
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const speed = 10
 
   const inputRef = useRef()
+  const [size, elementRef] = useElementSize()
 
   const [keypress, setKeyPress] = useState({
     ArrowDown: false,
@@ -25,11 +29,12 @@ function App() {
     let interval = setInterval(() => {
       if (Object.values(keypress).some(val => val)) {
         const { ArrowDown, ArrowUp, ArrowLeft, ArrowRight } = keypress
+        const { width, height } = size
         let newPosition = { ...position }
-        if (ArrowDown) newPosition.y = position.y + speed
-        if (ArrowUp) newPosition.y = position.y - speed
-        if (ArrowLeft) newPosition.x = position.x - speed
-        if (ArrowRight) newPosition.x = position.x + speed
+        if (ArrowDown && position.y < height - 100) newPosition.y = position.y + speed
+        if (ArrowUp && position.y > 0) newPosition.y = position.y - speed
+        if (ArrowLeft && position.x > 0) newPosition.x = position.x - speed
+        if (ArrowRight && position.x < width - 100) newPosition.x = position.x + speed
         setPosition(newPosition)
       }
     }, 10)
@@ -37,10 +42,11 @@ function App() {
     const clear = () => clearInterval(interval)
     if (!Object.values(keypress).some(val => val)) clear()
     return clear
-  }, [position, keypress])
+  }, [position, keypress, size])
 
   return (
-    <div style={{ position: 'relative' }}>
+    <>
+      <GlobalStyle />
       <input
         type="text"
         style={{ height: 0, width: 0, opacity: 0 }}
@@ -49,7 +55,7 @@ function App() {
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
       />
-      <div style={{ width: '100vw', height: '100vh' }}>
+      <div style={{ width: '100vw', height: '100vh' }} ref={elementRef}>
         <span
           role="img"
           aria-label="cat"
@@ -62,7 +68,7 @@ function App() {
           😸
         </span>
       </div>
-    </div>
+    </>
   )
 }
 
