@@ -18,7 +18,7 @@ export const HiddenInput = styled.input`
 `
 export const Arena = styled.div`
   width: 90vw;
-  height: 90vh;
+  height: 80vh;
   margin: auto;
   background: whitesmoke;
 `

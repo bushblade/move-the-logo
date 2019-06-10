@@ -68,6 +68,9 @@ function App() {
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
       />
+      <h2 style={{ textAlign: 'center' }}>
+        The cat is happy when he moves: Use the arrow keys to move him!!
+      </h2>
       <Arena ref={arenaRef}>
         <span
           role="img"
