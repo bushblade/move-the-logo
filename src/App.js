@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 
 import { useElementSize } from './hooks'
 import { GlobalStyle, HiddenInput, Arena } from './styled'
@@ -31,14 +31,14 @@ function App() {
     setKeyPress({ ...keypress, [e.key]: false })
   })
 
-  const isMoving = useCallback(() => Object.values(keypress).some(val => val), [keypress])
+  const isMoving = object => Object.values(object).some(val => val)
 
   // update position with setInterval but only if a key is being pressed.
   useEffect(() => {
     inputRef.current.focus()
     let interval = setInterval(() => {
       // if some keys are currently being pressed.
-      if (isMoving()) {
+      if (isMoving(keypress)) {
         const { ArrowDown, ArrowUp, ArrowLeft, ArrowRight } = keypress,
           { width, height } = size,
           catSize = getSize(catRef.current),
@@ -54,9 +54,9 @@ function App() {
     }, 10)
     // clear the interval if no arrow keys have been pressed
     const clear = () => clearInterval(interval)
-    if (!isMoving()) clear()
+    if (!isMoving(keypress)) clear()
     return clear
-  }, [position, keypress, size, isMoving])
+  }, [position, keypress, size])
 
   return (
     <>
@@ -79,10 +79,11 @@ function App() {
           style={{
             fontSize: '4rem',
             position: 'absolute',
+            willChange: 'transform',
             transform: `translate3d(${position.x}px,${position.y}px,0)`
           }}
         >
-          {isMoving() ? '😸' : '😾'}
+          {isMoving(keypress) ? '😸' : '😾'}
         </span>
       </Arena>
     </>
