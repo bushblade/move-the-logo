@@ -20,17 +20,18 @@ function App() {
     ArrowRight: false
   })
 
-  const handleKeyDown = e => {
-    if (!keypress[e.key] && keypress.hasOwnProperty(e.key)) {
-      setKeyPress({ ...keypress, [e.key]: true })
-    }
+  const keyHOF = func => e => {
+    if (keypress.hasOwnProperty(e.key)) func(e)
   }
 
-  const handleKeyUp = e => {
-    if (keypress.hasOwnProperty(e.key)) {
-      setKeyPress({ ...keypress, [e.key]: false })
-    }
-  }
+  const handleKeyDown = keyHOF(e => {
+    if (!keypress[e.key]) setKeyPress({ ...keypress, [e.key]: true })
+  })
+
+  const handleKeyUp = keyHOF(e => {
+    setKeyPress({ ...keypress, [e.key]: false })
+  })
+
   const isMoving = useCallback(() => Object.values(keypress).some(val => val), [keypress])
 
   // update position with setInterval but only if a key is being pressed.
@@ -39,11 +40,11 @@ function App() {
     let interval = setInterval(() => {
       // if some keys are currently being pressed.
       if (isMoving()) {
-        const { ArrowDown, ArrowUp, ArrowLeft, ArrowRight } = keypress
-        const { width, height } = size
-        const catSize = getSize(catRef.current)
-        const catWidth = catSize.width + 7
-        const catHeight = catSize.height + 10
+        const { ArrowDown, ArrowUp, ArrowLeft, ArrowRight } = keypress,
+          { width, height } = size,
+          catSize = getSize(catRef.current),
+          catWidth = catSize.width + 7,
+          catHeight = catSize.height + 10
         let newPosition = { ...position }
         if (ArrowDown && position.y < height - catHeight) newPosition.y = position.y + speed
         if (ArrowUp && position.y > 0) newPosition.y = position.y - speed
