@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 
-// import { ReactComponent } from './logo.svg'
 import { useElementSize } from './hooks'
 import { GlobalStyle, HiddenInput, Arena } from './styled'
 import { getSize } from './helpers'
